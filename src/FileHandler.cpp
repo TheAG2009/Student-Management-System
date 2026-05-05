@@ -7,7 +7,30 @@
 
 const std::string FileHandler::FILENAME = "data/students.txt";
 
+// Helper function to ensure data directory exists
+static void ensureDataDirectory() {
+    std::filesystem::create_directories("data");
+}
+
+// Helper function to create empty database if not exists
+static void ensureDatabaseFile() {
+    std::ifstream file(FileHandler::FILENAME);
+    if (!file.is_open()) {
+        std::ofstream newFile(FileHandler::FILENAME);
+        newFile << "# Student Management System Database" << std::endl;
+        newFile << "# Format: RollNo|Name|Class|Marks|Email|Phone" << std::endl;
+        newFile << "# Add your student records below this line" << std::endl;
+        newFile << std::endl;
+        newFile.close();
+        std::cout << "📁 Created new database file: " << FileHandler::FILENAME << std::endl;
+    }
+    file.close();
+}
+
 bool FileHandler::saveStudent(const Student& student) {
+    ensureDataDirectory();
+    ensureDatabaseFile();
+    
     std::ofstream file(FILENAME, std::ios::app);
     if (!file.is_open()) return false;
     
@@ -17,6 +40,9 @@ bool FileHandler::saveStudent(const Student& student) {
 }
 
 std::vector<Student> FileHandler::loadAllStudents() {
+    ensureDataDirectory();
+    ensureDatabaseFile();
+    
     std::vector<Student> students;
     std::ifstream file(FILENAME);
     
@@ -24,9 +50,9 @@ std::vector<Student> FileHandler::loadAllStudents() {
     
     std::string line;
     while (std::getline(file, line)) {
-        if (!line.empty()) {
-            students.push_back(Student::fromString(line));
-        }
+        // Skip comment lines and empty lines
+        if (line.empty() || line[0] == '#') continue;
+        students.push_back(Student::fromString(line));
     }
     
     file.close();
@@ -34,6 +60,9 @@ std::vector<Student> FileHandler::loadAllStudents() {
 }
 
 bool FileHandler::updateStudent(const Student& updatedStudent) {
+    ensureDataDirectory();
+    ensureDatabaseFile();
+    
     std::vector<Student> students = loadAllStudents();
     bool found = false;
     
@@ -50,6 +79,13 @@ bool FileHandler::updateStudent(const Student& updatedStudent) {
     std::ofstream file(FILENAME);
     if (!file.is_open()) return false;
     
+    // Write header comments
+    file << "# Student Management System Database" << std::endl;
+    file << "# Format: RollNo|Name|Class|Marks|Email|Phone" << std::endl;
+    file << "# Add your student records below this line" << std::endl;
+    file << std::endl;
+    
+    // Write all student records
     for (const auto& student : students) {
         file << student.toString() << std::endl;
     }
@@ -59,6 +95,9 @@ bool FileHandler::updateStudent(const Student& updatedStudent) {
 }
 
 bool FileHandler::deleteStudent(int rollNo) {
+    ensureDataDirectory();
+    ensureDatabaseFile();
+    
     std::vector<Student> students = loadAllStudents();
     bool found = false;
     
@@ -77,6 +116,13 @@ bool FileHandler::deleteStudent(int rollNo) {
     std::ofstream file(FILENAME);
     if (!file.is_open()) return false;
     
+    // Write header comments
+    file << "# Student Management System Database" << std::endl;
+    file << "# Format: RollNo|Name|Class|Marks|Email|Phone" << std::endl;
+    file << "# Add your student records below this line" << std::endl;
+    file << std::endl;
+    
+    // Write all student records
     for (const auto& student : students) {
         file << student.toString() << std::endl;
     }
@@ -105,6 +151,9 @@ int FileHandler::getNextRollNo() {
 }
 
 void FileHandler::backupData() {
+    ensureDataDirectory();
+    ensureDatabaseFile();
+    
     std::ifstream src(FILENAME, std::ios::binary);
     if (!src.is_open()) return;
     
@@ -117,4 +166,6 @@ void FileHandler::backupData() {
     
     src.close();
     dst.close();
+    
+    std::cout << "💾 Backup created: " << backupFile << std::endl;
 }
