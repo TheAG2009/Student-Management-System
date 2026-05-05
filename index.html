@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Professional Student Management System built with C++ featuring file handling, CRUD operations, and beautiful console UI">
+    <title>Student Management System | C++ Project</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary: #667eea;
+            --secondary: #764ba2;
+            --dark: #2d3748;
+            --success: #48bb78;
+            --danger: #f56565;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            min-height: 100vh;
+        }
+        
+        .navbar {
+            background: rgba(255,255,255,0.95);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .nav-links a {
+            color: var(--dark);
+            text-decoration: none;
+            margin-left: 2rem;
+            transition: color 0.3s;
+        }
+        
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .hero {
+            background: white;
+            border-radius: 20px;
+            padding: 3rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: fadeInUp 0.8s ease-out;
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .hero h1 {
+            font-size: 3rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 1rem;
+        }
+        
+        .badge {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            margin-right: 0.5rem;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 12px 30px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            margin: 0.5rem;
+            transition: transform 0.3s, box-shadow 0.3s;
+            border: none;
+            cursor: pointer;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+        }
+        
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+        
+        .feature-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            text-align: center;
+            transition: all 0.3s;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        
+        .code-block {
+            background: var(--dark);
+            color: #68d391;
+            padding: 1.5rem;
+            border-radius: 10px;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            margin: 1rem 0;
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 2rem;
+            text-align: center;
+            border-radius: 15px;
+        }
+        
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+        }
+        
+        footer {
+            background: var(--dark);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+            margin-top: 3rem;
+        }
+        
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2rem; }
+            .nav-container { flex-direction: column; }
+            .nav-links { margin-top: 1rem; }
+            .nav-links a { margin: 0 1rem; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">📚 Student Management System</div>
+            <div class="nav-links">
+                <a href="#features">Features</a>
+                <a href="#installation">Installation</a>
+                <a href="#usage">Usage</a>
+                <a href="#docs">Docs</a>
+            </div>
+        </div>
+    </nav>
+    
+    <div class="container">
+        <div class="hero">
+            <div style="margin-bottom: 1rem;">
+                <span class="badge">C++17</span>
+                <span class="badge">File Handling</span>
+                <span class="badge">OOP</span>
+                <span class="badge">Open Source</span>
+            </div>
+            <h1>Student Management System</h1>
+            <p style="font-size: 1.2rem; color: #666; margin: 1rem 0;">A professional, feature-rich console application for managing student records with persistent storage.</p>
+            <div>
+                <a href="https://github.com/YOUR_USERNAME/Student-Management-System" class="btn">📂 GitHub Repository</a>
+                <a href="#installation" class="btn btn-outline">🚀 Get Started</a>
+            </div>
+        </div>
+        
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-number">100%</div>
+                <div>C++ Code</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">7+</div>
+                <div>Features</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">24/7</div>
+                <div>Data Persistence</div>
+            </div>
+        </div>
+        
+        <div id="features">
+            <h2 style="font-size: 2rem; margin: 2rem 0;">✨ Key Features</h2>
+            <div class="features">
+                <div class="feature-card">
+                    <div class="feature-icon">➕</div>
+                    <h3>Add Students</h3>
+                    <p>Auto-generated roll numbers with validation</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📝</div>
+                    <h3>Update Records</h3>
+                    <p>Modify existing student information</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">❌</div>
+                    <h3>Delete Students</h3>
+                    <p>Remove with confirmation dialog</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔍</div>
+                    <h3>Search Feature</h3>
+                    <p>Find students by roll number</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <h3>Display All</h3>
+                    <p>Formatted table view with grades</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">💾</div>
+                    <h3>Backup System</h3>
+                    <p>Automatic data backups</p>
+                </div>
+            </div>
+        </div>
+        
+        <div id="installation">
+            <h2 style="font-size: 2rem; margin: 2rem 0;">🚀 Quick Installation</h2>
+            <div class="code-block">
+                <span style="color: #fbbf24;"># Clone the repository</span><br>
+                git clone https://github.com/YOUR_USERNAME/Student-Management-System.git<br>
+                cd Student-Management-System<br><br>
+                
+                <span style="color: #fbbf24;"># Run setup script</span><br>
+                chmod +x setup.sh && ./setup.sh     <span style="color: #6ee7b7;"># Linux/Mac</span><br>
+                setup.bat                            <span style="color: #6ee7b7;"># Windows</span><br><br>
+                
+                <span style="color: #fbbf24;"># Compile and run</span><br>
+                make clean && make && make run
+            </div>
+        </div>
+        
+        <div id="usage">
+            <h2 style="font-size: 2rem; margin: 2rem 0;">💻 Usage Example</h2>
+            <div class="code-block">
+                ┌─────────────────────────────────────────────────────────────────┐<br>
+                │                    📚 STUDENT MANAGEMENT SYSTEM 📚              │<br>
+                ├─────────────────────────────────────────────────────────────────┤<br>
+                │  1. ➕ Add New Student                                          │<br>
+                │  2. 📝 Update Student Information                               │<br>
+                │  3. ❌ Delete Student                                           │<br>
+                │  4. 🔍 Search Student                                           │<br>
+                │  5. 📊 Display All Students                                     │<br>
+                │  6. 💾 Backup Data                                              │<br>
+                │  7. 🚪 Exit                                                     │<br>
+                └─────────────────────────────────────────────────────────────────┘<br><br>
+                
+                🔹 Enter your choice (1-7): 1<br><br>
+                
+                📋 Student Details:<br>
+                Roll No: 101<br>
+                Name: John Doe<br>
+                Class: 10th Grade<br>
+                Marks: 85.5<br>
+                Grade: B<br>
+                Email: john@example.com<br>
+                Phone: 9876543210<br><br>
+                
+                ✅ Student added successfully!
+            </div>
+        </div>
+        
+        <div>
+            <h2 style="font-size: 2rem; margin: 2rem 0;">📊 Grade System</h2>
+            <div class="features">
+                <div class="feature-card">
+                    <h3>A Grade</h3>
+                    <p>90 - 100 Marks</p>
+                </div>
+                <div class="feature-card">
+                    <h3>B Grade</h3>
+                    <p>80 - 89 Marks</p>
+                </div>
+                <div class="feature-card">
+                    <h3>C Grade</h3>
+                    <p>70 - 79 Marks</p>
+                </div>
+                <div class="feature-card">
+                    <h3>D Grade</h3>
+                    <p>60 - 69 Marks</p>
+                </div>
+                <div class="feature-card">
+                    <h3>E Grade</h3>
+                    <p>50 - 59 Marks</p>
+                </div>
+                <div class="feature-card">
+                    <h3>F Grade</h3>
+                    <p>Below 50 Marks</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <footer>
+        <p>© 2024 Student Management System | Built with ❤️ using C++</p>
+        <p>MIT License | Open Source</p>
+        <p style="margin-top: 1rem;">
+            <a href="#" style="color: white;">Report Issue</a> |
+            <a href="#" style="color: white;">Documentation</a> |
+            <a href="#" style="color: white;">Contributing</a>
+        </p>
+    </footer>
+</body>
+</html>
